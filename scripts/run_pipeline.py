@@ -85,6 +85,42 @@ class SurgeryTranscriptionPipeline:
         timing_info['file_saving'] = save_time
         
         report = self.generate_report(quality_report, audio_path, transcript_path, quality_report_path, timing_info)
+
+        # --- Cleanup: Delete video, audio, and chunk files ---
+        try:
+            # Delete original video file
+            if video_path.exists():
+                video_path.unlink()
+                print(f"Deleted video file: {video_path}")
+        except Exception as e:
+            print(f"Warning: Failed to delete video file {video_path}: {e}")
+
+        try:
+            # Delete extracted audio file (if not chunked, or if chunked, will be deleted below)
+            if audio_path.exists():
+                audio_path.unlink()
+                print(f"Deleted audio file: {audio_path}")
+        except Exception as e:
+            print(f"Warning: Failed to delete audio file {audio_path}: {e}")
+
+        # Delete audio chunks and chunk directory if chunking was used
+        if len(audio_chunks) > 1:
+            chunk_dir = audio_chunks[0].parent
+            for chunk in audio_chunks:
+                try:
+                    if chunk.exists():
+                        chunk.unlink()
+                        print(f"Deleted audio chunk: {chunk}")
+                except Exception as e:
+                    print(f"Warning: Failed to delete audio chunk {chunk}: {e}")
+            # Try to remove the chunk directory if empty
+            try:
+                if chunk_dir.exists() and not any(chunk_dir.iterdir()):
+                    chunk_dir.rmdir()
+                    print(f"Deleted chunk directory: {chunk_dir}")
+            except Exception as e:
+                print(f"Warning: Failed to delete chunk directory {chunk_dir}: {e}")
+
         return report
         
     def generate_report(self, results: Dict[str, Any], output_path: Path, transcript_path: Path, quality_report_path: Path, timing_info: Dict[str, Any]) -> Dict[str, Any]:

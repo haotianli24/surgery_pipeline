@@ -2,6 +2,7 @@ import openai
 from pathlib import Path
 from typing import Dict, Any
 import logging
+import time
 
 class WhisperClient:
     def __init__(self, config):
@@ -11,6 +12,7 @@ class WhisperClient:
     
     def transcribe_audio(self, audio_path: Path, **kwargs) -> Dict[str, Any]:
         """Transcribe audio file using Whisper API"""
+        start_time = time.time()
         try:
             with open(audio_path, "rb") as audio_file:
                 response = self.client.audio.transcriptions.create(
@@ -18,9 +20,16 @@ class WhisperClient:
                     file=audio_file,
                     **kwargs
                 )
+            duration = time.time() - start_time
+            self.logger.info(f"Transcription succeeded for {audio_path} in {duration:.2f} seconds.")
             return {"text": response.text}
+        except TimeoutError as e:
+            duration = time.time() - start_time
+            self.logger.error(f"API TIMEOUT: Transcription timed out for {audio_path} after {duration:.2f} seconds: {e}")
+            raise
         except Exception as e:
-            self.logger.error(f"Transcription failed: {e}")
+            duration = time.time() - start_time
+            self.logger.error(f"Transcription failed for {audio_path} after {duration:.2f} seconds: {e}")
             raise
     
     def transcribe_chunks(self, audio_chunks: list[Path]) -> Dict[str, Any]:
@@ -39,6 +48,9 @@ class WhisperClient:
                 self.logger.info(f"Transcribing chunk {i+1}/{len(audio_chunks)}: {chunk_path.name}")
                 result = self.transcribe_audio(chunk_path)
                 all_texts.append(result["text"])
+            except TimeoutError as e:
+                self.logger.error(f"API TIMEOUT: Failed to transcribe chunk {i+1} ({chunk_path.name}) due to timeout: {e}")
+                all_texts.append(f"[ERROR: Timeout on chunk {i+1}]")
             except Exception as e:
                 self.logger.error(f"Failed to transcribe chunk {i+1}: {e}")
                 all_texts.append(f"[ERROR: Failed to transcribe chunk {i+1}]")
