@@ -1,0 +1,105 @@
+2025-07-11 15:45:45,585 - INFO - Loading Medical Whisper model...
+2025-07-11 15:46:21,851 - INFO - Medical Whisper model loaded successfully on cpu
+2025-07-11 15:46:21,852 - INFO - Starting Medical Video Filter
+2025-07-11 15:46:21,853 - INFO - Loaded 3394 video links
+2025-07-11 15:46:21,853 - INFO - Processing video 1/3394
+2025-07-11 15:46:21,853 - INFO - Processing: https://www.youtube.com/watch?v=u9TSMfvq4LY
+2025-07-11 15:46:23,388 - WARNING - Failed to download https://www.youtube.com/watch?v=u9TSMfvq4LY: [0;31mERROR:[0m [youtube] u9TSMfvq4LY: Sign in to confirm your age. This video may be inappropriate for some users. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+2025-07-11 15:46:23,388 - WARNING - Failed to download audio for: https://www.youtube.com/watch?v=u9TSMfvq4LY
+2025-07-11 15:46:23,388 - INFO - ✗ REMOVED: https://www.youtube.com/watch?v=u9TSMfvq4LY
+2025-07-11 15:46:24,394 - INFO - Processing video 2/3394
+2025-07-11 15:46:24,394 - INFO - Processing: https://www.youtube.com/watch?v=zfrMhSebW2g
+2025-07-11 15:46:40,430 - WARNING - Failed to transcribe audio: The length of `decoder_input_ids`, including special start tokens, prompt tokens, and previous tokens, is 4,  and `max_new_tokens` is 448. Thus, the combined length of `decoder_input_ids` and `max_new_tokens` is: 452. This exceeds the `max_target_positions` of the Whisper model: 448. You should either reduce the length of your prompt, or reduce the value of `max_new_tokens`, so that their combined length is less than 448.
+2025-07-11 15:46:40,431 - WARNING - Failed to transcribe: https://www.youtube.com/watch?v=zfrMhSebW2g
+2025-07-11 15:46:40,618 - INFO - ✗ REMOVED: https://www.youtube.com/watch?v=zfrMhSebW2g
+2025-07-11 15:46:41,624 - INFO - Processing video 3/3394
+2025-07-11 15:46:41,624 - INFO - Processing: https://www.youtube.com/watch?v=Cy1jmoBdXks
+2025-07-11 15:46:43,583 - INFO - Skipping long video (46 minutes): https://www.youtube.com/watch?v=Cy1jmoBdXks
+2025-07-11 15:46:43,585 - WARNING - Failed to download audio for: https://www.youtube.com/watch?v=Cy1jmoBdXks
+2025-07-11 15:46:43,585 - INFO - ✗ REMOVED: https://www.youtube.com/watch?v=Cy1jmoBdXks
+2025-07-11 15:46:44,590 - INFO - Processing video 4/3394
+2025-07-11 15:46:44,591 - INFO - Processing: https://www.youtube.com/watch?v=QbeI72QmFAU
+2025-07-11 15:46:49,491 - WARNING - Failed to transcribe audio: The length of `decoder_input_ids`, including special start tokens, prompt tokens, and previous tokens, is 4,  and `max_new_tokens` is 448. Thus, the combined length of `decoder_input_ids` and `max_new_tokens` is: 452. This exceeds the `max_target_positions` of the Whisper model: 448. You should either reduce the length of your prompt, or reduce the value of `max_new_tokens`, so that their combined length is less than 448.
+2025-07-11 15:46:49,492 - WARNING - Failed to transcribe: https://www.youtube.com/watch?v=QbeI72QmFAU
+2025-07-11 15:46:49,544 - INFO - ✗ REMOVED: https://www.youtube.com/watch?v=QbeI72QmFAU
+2025-07-11 15:46:50,550 - INFO - Processing video 5/3394
+2025-07-11 15:46:50,550 - INFO - Processing: https://www.youtube.com/watch?v=DowfMGPD0WI
+2025-07-11 15:46:51,597 - WARNING - Failed to download https://www.youtube.com/watch?v=DowfMGPD0WI: [0;31mERROR:[0m [youtube] DowfMGPD0WI: Sign in to confirm your age. This video may be inappropriate for some users. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+2025-07-11 15:46:51,597 - WARNING - Failed to download audio for: https://www.youtube.com/watch?v=DowfMGPD0WI
+2025-07-11 15:46:51,597 - INFO - ✗ REMOVED: https://www.youtube.com/watch?v=DowfMGPD0WI
+2025-07-11 15:46:52,603 - INFO - Processing video 6/3394
+2025-07-11 15:46:52,603 - INFO - Processing: https://www.youtube.com/watch?v=F2bJFDvDVxg
+2025-07-11 15:46:59,548 - WARNING - Failed to transcribe audio: The length of `decoder_input_ids`, including special start tokens, prompt tokens, and previous tokens, is 4,  and `max_new_tokens` is 448. Thus, the combined length of `decoder_input_ids` and `max_new_tokens` is: 452. This exceeds the `max_target_positions` of the Whisper model: 448. You should either reduce the length of your prompt, or reduce the value of `max_new_tokens`, so that their combined length is less than 448.
+2025-07-11 15:46:59,549 - WARNING - Failed to transcribe: https://www.youtube.com/watch?v=F2bJFDvDVxg
+2025-07-11 15:46:59,975 - INFO - ✗ REMOVED: https://www.youtube.com/watch?v=F2bJFDvDVxg
+2025-07-11 15:47:00,981 - INFO - Processing video 7/3394
+2025-07-11 15:47:00,982 - INFO - Processing: https://www.youtube.com/watch?v=R3i1P6_ARvI
+2025-07-11 15:47:06,060 - WARNING - Failed to transcribe audio: The length of `decoder_input_ids`, including special start tokens, prompt tokens, and previous tokens, is 4,  and `max_new_tokens` is 448. Thus, the combined length of `decoder_input_ids` and `max_new_tokens` is: 452. This exceeds the `max_target_positions` of the Whisper model: 448. You should either reduce the length of your prompt, or reduce the value of `max_new_tokens`, so that their combined length is less than 448.
+2025-07-11 15:47:06,064 - WARNING - Failed to transcribe: https://www.youtube.com/watch?v=R3i1P6_ARvI
+2025-07-11 15:47:06,149 - INFO - ✗ REMOVED: https://www.youtube.com/watch?v=R3i1P6_ARvI
+2025-07-11 15:47:07,155 - INFO - Processing video 8/3394
+2025-07-11 15:47:07,155 - INFO - Processing: https://www.youtube.com/watch?v=S_zLsm43QKc
+2025-07-11 15:47:10,853 - INFO - Processing interrupted by user
+2025-07-11 15:47:10,855 - INFO - Saved 0 filtered links to data/video_links.txt
+2025-07-11 15:47:10,855 - INFO - 
+=== PROCESSING COMPLETE ===
+2025-07-11 15:47:10,855 - INFO - Total videos processed: 7
+2025-07-11 15:47:10,855 - INFO - Videos with medical content: 0
+2025-07-11 15:47:10,855 - INFO - Videos removed: 7
+2025-07-11 15:47:10,855 - INFO - Medical content ratio: 0.0%
+2025-07-11 15:47:10,855 - INFO - Filtered links saved to: data/video_links.txt
+2025-07-11 15:47:36,082 - INFO - Loading Medical Whisper model...
+2025-07-11 15:47:38,550 - INFO - Medical Whisper model loaded successfully on cpu
+2025-07-11 15:47:38,551 - INFO - Starting Medical Video Filter
+2025-07-11 15:47:38,551 - INFO - Loaded 0 video links
+2025-07-11 15:47:38,551 - WARNING - No video links found
+2025-07-11 15:48:30,603 - INFO - Loading Medical Whisper model...
+2025-07-11 15:48:32,069 - INFO - Medical Whisper model loaded successfully on cpu
+2025-07-11 15:48:32,069 - INFO - Starting Medical Video Filter
+2025-07-11 15:48:32,071 - INFO - Loaded 3394 video links
+2025-07-11 15:48:32,098 - INFO - Processing video 1/3394
+2025-07-11 15:48:32,098 - INFO - Processing: https://www.youtube.com/watch?v=u9TSMfvq4LY
+2025-07-11 15:48:33,365 - WARNING - Failed to download https://www.youtube.com/watch?v=u9TSMfvq4LY: [0;31mERROR:[0m [youtube] u9TSMfvq4LY: Sign in to confirm your age. This video may be inappropriate for some users. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+2025-07-11 15:48:33,365 - WARNING - Failed to download audio for: https://www.youtube.com/watch?v=u9TSMfvq4LY
+2025-07-11 15:48:33,366 - INFO - ✗ REMOVED: https://www.youtube.com/watch?v=u9TSMfvq4LY
+2025-07-11 15:48:34,371 - INFO - Processing video 2/3394
+2025-07-11 15:48:34,372 - INFO - Processing: https://www.youtube.com/watch?v=zfrMhSebW2g
+2025-07-11 15:48:39,799 - INFO - Processing interrupted by user
+2025-07-11 15:48:39,800 - INFO - Saved 0 filtered links to data/video_links.txt
+2025-07-11 15:48:39,800 - INFO - 
+=== PROCESSING COMPLETE ===
+2025-07-11 15:48:39,800 - INFO - Total videos processed: 1
+2025-07-11 15:48:39,800 - INFO - Videos with medical content: 0
+2025-07-11 15:48:39,800 - INFO - Videos removed: 1
+2025-07-11 15:48:39,800 - INFO - Medical content ratio: 0.0%
+2025-07-11 15:48:39,800 - INFO - Filtered links saved to: data/video_links.txt
+2025-07-11 15:59:18,710 - INFO - Loading Medical Whisper model...
+2025-07-11 15:59:22,896 - INFO - Medical Whisper model loaded successfully on cpu
+2025-07-11 15:59:22,896 - INFO - Starting Medical Video Filter
+2025-07-11 15:59:22,896 - INFO - Loaded 0 video links
+2025-07-11 15:59:22,896 - WARNING - No video links found
+2025-07-11 15:59:33,146 - INFO - Loading Medical Whisper model...
+2025-07-11 15:59:34,590 - INFO - Medical Whisper model loaded successfully on cpu
+2025-07-11 15:59:34,590 - INFO - Starting Medical Video Filter
+2025-07-11 15:59:34,591 - INFO - Loaded 3394 video links
+2025-07-11 15:59:34,618 - INFO - Processing video 1/3394
+2025-07-11 15:59:34,618 - INFO - Processing: https://www.youtube.com/watch?v=u9TSMfvq4LY
+2025-07-11 15:59:34,618 - INFO - Using cookies file: data/cookies.txt
+2025-07-11 16:02:11,395 - INFO - Sample transcription: This evening we're performing a liver transplant on a patient with cirrhosis and decompensated liver disease who has a meld score in the high 20s. Sufine, right arm tucked, and liver's on the way. Blo...
+2025-07-11 16:02:11,397 - INFO - Has medical content: True
+2025-07-11 16:02:11,441 - INFO - ✓ KEPT: https://www.youtube.com/watch?v=u9TSMfvq4LY
+2025-07-11 16:02:12,466 - INFO - Processing video 2/3394
+2025-07-11 16:02:12,466 - INFO - Processing: https://www.youtube.com/watch?v=zfrMhSebW2g
+2025-07-11 16:02:12,466 - INFO - Using cookies file: data/cookies.txt
+2025-07-11 16:02:17,875 - WARNING - Failed to download https://www.youtube.com/watch?v=zfrMhSebW2g: [0;31mERROR:[0m Postprocessing: audio conversion failed: Conversion failed!
+2025-07-11 16:02:17,876 - WARNING - Failed to download audio for: https://www.youtube.com/watch?v=zfrMhSebW2g
+2025-07-11 16:02:17,911 - INFO - ✗ REMOVED: https://www.youtube.com/watch?v=zfrMhSebW2g
+2025-07-11 16:02:18,972 - INFO - Processing video 3/3394
+2025-07-11 16:02:18,972 - INFO - Processing: https://www.youtube.com/watch?v=Cy1jmoBdXks
+2025-07-11 16:02:18,973 - INFO - Using cookies file: data/cookies.txt
+2025-07-11 16:02:20,858 - INFO - Skipping long video (46 minutes): https://www.youtube.com/watch?v=Cy1jmoBdXks
+2025-07-11 16:02:20,859 - WARNING - Failed to download audio for: https://www.youtube.com/watch?v=Cy1jmoBdXks
+2025-07-11 16:02:20,859 - INFO - ✗ REMOVED: https://www.youtube.com/watch?v=Cy1jmoBdXks
+2025-07-11 16:02:21,865 - INFO - Processing video 4/3394
+2025-07-11 16:02:21,865 - INFO - Processing: https://www.youtube.com/watch?v=QbeI72QmFAU
+2025-07-11 16:02:21,866 - INFO - Using cookies file: data/cookies.txt
