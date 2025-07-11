@@ -63,9 +63,72 @@ class SurgeryTranscriptionPipeline:
         save_start = time.time()
         output_dir = Path(self.config.output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Save plain text transcript
         transcript_path = output_dir / f"{video_path.stem}_transcript.txt"
         with open(transcript_path, "w") as f:
             f.write(transcript["text"] if isinstance(transcript, dict) and "text" in transcript else str(transcript))
+
+        # Save grouped transcript (even text, even time)
+        try:
+            import math
+            import re
+            # Get video duration (from audio extractor or ffprobe)
+            duration = None
+            try:
+                duration = self.audio_extractor.get_audio_duration(audio_path)
+            except Exception:
+                pass
+            if not duration:
+                # fallback: try to get from transcript segments
+                if isinstance(transcript, dict) and transcript.get("segments") and len(transcript["segments"]):
+                    duration = transcript["segments"][-1]["end"]
+            if not duration:
+                duration = 60  # fallback default
+            # Split transcript text into N groups
+            N = 10
+            text = transcript["text"] if isinstance(transcript, dict) and "text" in transcript else str(transcript)
+            # Split into sentences (or words if very short)
+            sentences = re.split(r'(?<=[.!?]) +', text)
+            if len(sentences) < N:
+                # fallback to words
+                words = text.split()
+                group_size = math.ceil(len(words) / N)
+                groups = [" ".join(words[i*group_size:(i+1)*group_size]) for i in range(N)]
+            else:
+                group_size = math.ceil(len(sentences) / N)
+                groups = [" ".join(sentences[i*group_size:(i+1)*group_size]) for i in range(N)]
+            # Assign timestamps
+            interval = duration / N
+            grouped_lines = []
+            for i, group in enumerate(groups):
+                ts_sec = int(i * interval)
+                ts_min = ts_sec // 60
+                ts_rem = ts_sec % 60
+                grouped_lines.append(f"[{ts_min}:{ts_rem:02d}]\n\n{group.strip()}\n")
+            grouped_path = output_dir / f"{video_path.stem}_transcript_grouped.txt"
+            with open(grouped_path, "w") as f:
+                f.write("\n".join(grouped_lines))
+        except Exception as e:
+            print(f"Warning: Failed to save grouped transcript: {e}")
+        
+        # Save detailed transcript with timestamps (JSON)
+        if isinstance(transcript, dict) and "segments" in transcript:
+            detailed_transcript_path = output_dir / f"{video_path.stem}_transcript_detailed.json"
+            with open(detailed_transcript_path, "w") as f:
+                json.dump(transcript, f, indent=2)
+            
+            # Save VTT format for video players
+            vtt_path = output_dir / f"{video_path.stem}_transcript.vtt"
+            with open(vtt_path, "w") as f:
+                f.write("WEBVTT\n\n")
+                for i, segment in enumerate(transcript.get("segments", [])):
+                    start_time_str = self._format_timestamp(segment.get("start", 0))
+                    end_time_str = self._format_timestamp(segment.get("end", 0))
+                    text = segment.get("text", "").strip()
+                    f.write(f"{i+1}\n")
+                    f.write(f"{start_time_str} --> {end_time_str}\n")
+                    f.write(f"{text}\n\n")
         
         # Save quality report as JSON
         quality_report_path = output_dir / f"{video_path.stem}_quality_report.json"
@@ -133,6 +196,14 @@ class SurgeryTranscriptionPipeline:
             "transcript_path": str(transcript_path),
             "quality_report_path": str(quality_report_path)
         }
+
+    def _format_timestamp(self, seconds: float) -> str:
+        """Helper to format seconds into HH:MM:SS.ms"""
+        hours = int(seconds // 3600)
+        minutes = int((seconds % 3600) // 60)
+        seconds_part = int(seconds % 60)
+        milliseconds = int((seconds - int(seconds)) * 1000)
+        return f"{hours:02d}:{minutes:02d}:{seconds_part:02d}.{milliseconds:03d}"
 
 def main():
     if len(sys.argv) != 2:
