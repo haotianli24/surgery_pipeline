@@ -69,9 +69,8 @@ class SurgeryTranscriptionPipeline:
         with open(transcript_path, "w") as f:
             f.write(transcript["text"] if isinstance(transcript, dict) and "text" in transcript else str(transcript))
 
-        # Save grouped transcript (even text, even time)
+        # Save transcript with timestamps for each sentence
         try:
-            import math
             import re
             # Get video duration (from audio extractor or ffprobe)
             duration = None
@@ -85,32 +84,32 @@ class SurgeryTranscriptionPipeline:
                     duration = transcript["segments"][-1]["end"]
             if not duration:
                 duration = 60  # fallback default
-            # Split transcript text into N groups
-            N = 10
+            
+            # Get transcript text
             text = transcript["text"] if isinstance(transcript, dict) and "text" in transcript else str(transcript)
-            # Split into sentences (or words if very short)
+            
+            # Split into sentences
             sentences = re.split(r'(?<=[.!?]) +', text)
-            if len(sentences) < N:
-                # fallback to words
-                words = text.split()
-                group_size = math.ceil(len(words) / N)
-                groups = [" ".join(words[i*group_size:(i+1)*group_size]) for i in range(N)]
+            sentences = [s.strip() for s in sentences if s.strip()]  # Remove empty sentences
+            
+            # Assign timestamps to each sentence
+            if sentences:
+                interval = duration / len(sentences)
+                timestamped_lines = []
+                for i, sentence in enumerate(sentences):
+                    ts_sec = int(i * interval)
+                    ts_min = ts_sec // 60
+                    ts_rem = ts_sec % 60
+                    timestamped_lines.append(f"[{ts_min}:{ts_rem:02d}] {sentence}")
+                
+                timestamped_path = output_dir / f"{video_path.stem}_transcript_timestamped.txt"
+                with open(timestamped_path, "w") as f:
+                    f.write("\n".join(timestamped_lines))
             else:
-                group_size = math.ceil(len(sentences) / N)
-                groups = [" ".join(sentences[i*group_size:(i+1)*group_size]) for i in range(N)]
-            # Assign timestamps
-            interval = duration / N
-            grouped_lines = []
-            for i, group in enumerate(groups):
-                ts_sec = int(i * interval)
-                ts_min = ts_sec // 60
-                ts_rem = ts_sec % 60
-                grouped_lines.append(f"[{ts_min}:{ts_rem:02d}]\n\n{group.strip()}\n")
-            grouped_path = output_dir / f"{video_path.stem}_transcript_grouped.txt"
-            with open(grouped_path, "w") as f:
-                f.write("\n".join(grouped_lines))
+                print("Warning: No sentences found in transcript")
+                
         except Exception as e:
-            print(f"Warning: Failed to save grouped transcript: {e}")
+            print(f"Warning: Failed to save timestamped transcript: {e}")
         
         # Save detailed transcript with timestamps (JSON)
         if isinstance(transcript, dict) and "segments" in transcript:
@@ -227,7 +226,19 @@ def main():
     start_time = time.time()
     results = pipeline.process_video(video_path)
     total_time = time.time() - start_time
-    
+
+
+    #send transcript to LLM to reformat into steps
+
+    #step 1: grab transcript from folder
+    #step 2: send text to LLM with a prompt like this
+    # "Break this transcript into numbered procedural steps,
+    # using provided timestamps and section headings.
+    # For each step, include relevant transcript excerpts and timestamps."
+
+    # step 3: get the feedback transcript from llm and format it into a folder called results
+    # it should have: youtube link as first line, then steps with transcript for the following lines
+
     print(f"\n{'='*60}")
     print(f"Processing complete!")
     print(f"Total processing time: {total_time:.2f} seconds ({total_time/60:.1f} minutes)")

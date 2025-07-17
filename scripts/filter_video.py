@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Medical Video Content Filter
-Downloads videos, transcribes them using Medical Whisper, and filters for medical content.
+Video Transcript Length Filter
+Downloads videos, transcribes them using Medical Whisper, and filters for videos with sufficient transcript length.
 """
 
 import os
@@ -15,6 +15,7 @@ from typing import List, Set, Optional, Dict, Union, Any
 import subprocess
 import time
 import json
+import platform
 
 # Import required libraries
 try:
@@ -41,17 +42,17 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-class MedicalVideoFilter:
+class VideoTranscriptFilter:
     def __init__(self, video_links_file: str, output_file: Optional[str] = None):
         """
-        Initialize the Medical Video Filter
+        Initialize the Video Transcript Length Filter
         
         Args:
             video_links_file: Path to file containing video links (one per line)
-            output_file: Path to output filtered links (defaults to input file)
+            output_file: Path to output filtered links (defaults to filtered_links.txt)
         """
         self.video_links_file = video_links_file
-        self.output_file = output_file or video_links_file
+        self.output_file = output_file or "filtered_links.txt"
         self.temp_dir = tempfile.mkdtemp()
         self.processed_count = 0
         self.kept_count = 0
@@ -74,6 +75,10 @@ class MedicalVideoFilter:
         
         # Initialize Medical Whisper model
         self.setup_whisper()
+        
+        # Cookie refresh settings
+        self.cookies_refreshed = False
+        self.max_cookie_refreshes = 3
         
     def setup_whisper(self):
         """Initialize the Medical Whisper model"""
@@ -112,6 +117,53 @@ class MedicalVideoFilter:
             logger.error(f"Failed to load Medical Whisper model: {e}")
             raise
     
+    def refresh_cookies_from_browser(self) -> bool:
+        """
+        Refresh cookies from browser using yt-dlp's built-in cookie extraction
+        
+        Returns:
+            True if cookies were successfully refreshed
+        """
+        try:
+            logger.info("Attempting to refresh cookies from browser...")
+            
+            # Determine the system and browser
+            system = platform.system().lower()
+            
+            # Try different browsers in order of preference
+            browsers = ['chrome', 'firefox', 'safari', 'edge']
+            
+            for browser in browsers:
+                try:
+                    logger.info(f"Trying to extract cookies from {browser}...")
+                    
+                    # Use yt-dlp's built-in cookie extraction
+                    ydl_opts = {
+                        'cookiesfrombrowser': (browser,),
+                        'cookiefile': os.path.join(os.path.dirname(self.video_links_file), 'cookies.txt'),
+                        'quiet': True,
+                        'no_warnings': True,
+                    }
+                    
+                    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                        # Test with a simple YouTube URL to extract cookies
+                        test_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"  # Rick Roll
+                        ydl.extract_info(test_url, download=False)
+                    
+                    logger.info(f"Successfully refreshed cookies from {browser}")
+                    return True
+                    
+                except Exception as e:
+                    logger.debug(f"Failed to extract cookies from {browser}: {e}")
+                    continue
+            
+            logger.warning("Failed to refresh cookies from any browser")
+            return False
+            
+        except Exception as e:
+            logger.error(f"Error refreshing cookies: {e}")
+            return False
+    
     def load_video_links(self) -> List[str]:
         """Load video links from file"""
         try:
@@ -123,18 +175,78 @@ class MedicalVideoFilter:
             logger.error(f"Failed to load video links: {e}")
             raise
     
-    def save_filtered_links(self, filtered_links: List[str]):
-        """Save filtered links back to file"""
+    def get_resume_index(self, video_links: List[str]) -> int:
+        """
+        Find the index to resume processing from based on the last video in filtered_links.txt
+        
+        Args:
+            video_links: List of all video links
+            
+        Returns:
+            Index to resume from (0 if no filtered links exist)
+        """
         try:
-            with open(self.output_file, 'w', encoding='utf-8') as f:
+            if not os.path.exists(self.output_file):
+                logger.info("No existing filtered links file found, starting from beginning")
+                return 0
+            
+            # Read the last line from filtered_links.txt
+            with open(self.output_file, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+                if not lines:
+                    logger.info("Filtered links file is empty, starting from beginning")
+                    return 0
+                
+                last_processed_link = lines[-1].strip()
+                if not last_processed_link:
+                    logger.info("Last line in filtered links file is empty, starting from beginning")
+                    return 0
+            
+            # Find the index of this link in the original video_links.txt
+            try:
+                resume_index = video_links.index(last_processed_link)
+                logger.info(f"Found last processed video at index {resume_index}")
+                
+                # Resume from the next video after the last processed one
+                next_index = resume_index + 1
+                if next_index >= len(video_links):
+                    logger.info("All videos have been processed")
+                    return len(video_links)
+                
+                logger.info(f"Resuming from video {next_index + 1}/{len(video_links)}: {video_links[next_index]}")
+                return next_index
+                
+            except ValueError:
+                logger.warning(f"Last processed link '{last_processed_link}' not found in original video list, starting from beginning")
+                return 0
+                
+        except Exception as e:
+            logger.error(f"Error determining resume index: {e}")
+            return 0
+    
+    def save_filtered_links(self, filtered_links: List[str], append: bool = False):
+        """
+        Save filtered links to output file
+        
+        Args:
+            filtered_links: List of links to save
+            append: If True, append to existing file. If False, overwrite file.
+        """
+        try:
+            mode = 'a' if append else 'w'
+            with open(self.output_file, mode, encoding='utf-8') as f:
                 for link in filtered_links:
                     f.write(f"{link}\n")
-            logger.info(f"Saved {len(filtered_links)} filtered links to {self.output_file}")
+            
+            if append:
+                logger.info(f"Appended {len(filtered_links)} new filtered links to {self.output_file}")
+            else:
+                logger.info(f"Saved {len(filtered_links)} filtered links to {self.output_file}")
         except Exception as e:
             logger.error(f"Failed to save filtered links: {e}")
             raise
     
-    def download_video_audio(self, url: str) -> Optional[str]:
+    def download_video_audio(self, url: str) -> Optional[Dict[str, Any]]:
         """
         Download video and extract audio
         
@@ -142,16 +254,13 @@ class MedicalVideoFilter:
             url: Video URL
             
         Returns:
-            Path to audio file or None if failed
+            Dict with audio_path and duration, or None if failed
         """
         try:
             # Configure yt-dlp options
             ydl_opts = {
                 'format': 'bestaudio/best',
                 'outtmpl': os.path.join(self.temp_dir, 'temp_audio.%(ext)s'),
-                'extractaudio': True,
-                'audioformat': 'wav',
-                'audioquality': 5,
                 'quiet': True,
                 'no_warnings': True,
                 'postprocessors': [{
@@ -175,13 +284,9 @@ class MedicalVideoFilter:
                     return None
                 
                 duration = info.get('duration', 0)
+                logger.info(f"Video duration: {duration//60} minutes {duration%60} seconds")
                 
-                # Skip very long videos (>30 minutes) to save time
-                if duration > 1800:
-                    logger.info(f"Skipping long video ({duration//60} minutes): {url}")
-                    return None
-                
-                # Download audio
+                # Try to download with WAV conversion
                 ydl.download([url])
                 
                 # Find the downloaded audio file
@@ -189,23 +294,108 @@ class MedicalVideoFilter:
                     if file.startswith('temp_audio'):
                         audio_path = os.path.join(self.temp_dir, file)
                         logger.debug(f"Downloaded audio: {audio_path}")
-                        return audio_path
+                        return {'audio_path': audio_path, 'duration': duration}
                 
                 return None
                 
         except Exception as e:
+            error_str = str(e).lower()
+            
+            # Check if this is an age verification error
+            if "sign in to confirm your age" in error_str or "inappropriate for some users" in error_str:
+                logger.warning(f"Age verification required for: {url}")
+                
+                # Try to refresh cookies if we haven't exceeded the limit
+                if not self.cookies_refreshed and self.max_cookie_refreshes > 0:
+                    logger.info("Attempting to refresh cookies...")
+                    if self.refresh_cookies_from_browser():
+                        self.cookies_refreshed = True
+                        self.max_cookie_refreshes -= 1
+                        logger.info("Cookies refreshed, retrying download...")
+                        
+                        # Retry the download with fresh cookies
+                        return self.download_video_audio(url)
+                    else:
+                        logger.warning("Failed to refresh cookies")
+                else:
+                    logger.warning("Cookie refresh limit reached or already attempted")
+            
+            # If it's not an age verification error, try alternative audio formats
+            try:
+                logger.warning(f"WAV conversion failed, trying MP3: {e}")
+                
+                # Try with MP3 instead
+                ydl_opts_mp3 = {
+                    'format': 'bestaudio/best',
+                    'outtmpl': os.path.join(self.temp_dir, 'temp_audio.%(ext)s'),
+                    'quiet': True,
+                    'no_warnings': True,
+                    'postprocessors': [{
+                        'key': 'FFmpegExtractAudio',
+                        'preferredcodec': 'mp3',
+                        'preferredquality': '192',
+                    }],
+                }
+                
+                # Add cookies if available
+                cookies_path = os.path.join(os.path.dirname(self.video_links_file), 'cookies.txt')
+                if os.path.exists(cookies_path):
+                    ydl_opts_mp3['cookiefile'] = cookies_path
+                
+                with yt_dlp.YoutubeDL(ydl_opts_mp3) as ydl2:
+                    ydl2.download([url])
+                    
+                    # Find the downloaded audio file
+                    for file in os.listdir(self.temp_dir):
+                        if file.startswith('temp_audio'):
+                            audio_path = os.path.join(self.temp_dir, file)
+                            logger.debug(f"Downloaded audio (MP3): {audio_path}")
+                            return {'audio_path': audio_path, 'duration': duration}
+                            
+            except Exception as e2:
+                try:
+                    logger.warning(f"MP3 conversion also failed, trying raw audio: {e2}")
+                    
+                    # Try without any conversion - just get the best audio format
+                    ydl_opts_raw = {
+                        'format': 'bestaudio/best',
+                        'outtmpl': os.path.join(self.temp_dir, 'temp_audio.%(ext)s'),
+                        'quiet': True,
+                        'no_warnings': True,
+                    }
+                    
+                    # Add cookies if available
+                    cookies_path = os.path.join(os.path.dirname(self.video_links_file), 'cookies.txt')
+                    if os.path.exists(cookies_path):
+                        ydl_opts_raw['cookiefile'] = cookies_path
+                    
+                    with yt_dlp.YoutubeDL(ydl_opts_raw) as ydl3:
+                        ydl3.download([url])
+                        
+                        # Find the downloaded audio file
+                        for file in os.listdir(self.temp_dir):
+                            if file.startswith('temp_audio'):
+                                audio_path = os.path.join(self.temp_dir, file)
+                                logger.debug(f"Downloaded raw audio: {audio_path}")
+                                return {'audio_path': audio_path, 'duration': duration}
+                                
+                except Exception as e3:
+                    logger.warning(f"All download methods failed: {e3}")
+            
             logger.warning(f"Failed to download {url}: {e}")
             return None
     
-    def transcribe_audio(self, audio_path: str) -> str:
+    def transcribe_audio_chunked(self, audio_path: str, duration: int, min_words: int = 30) -> str:
         """
-        Transcribe audio using Medical Whisper
+        Transcribe audio in chunks until minimum word count is reached
         
         Args:
             audio_path: Path to audio file
+            duration: Video duration in seconds
+            min_words: Minimum number of words required
             
         Returns:
-            Transcribed text
+            Transcribed text (accumulated from chunks)
         """
         try:
             # Load audio with librosa
@@ -216,65 +406,76 @@ class MedicalVideoFilter:
                 logger.debug("Audio too short, skipping")
                 return ""
             
-            # Transcribe using the pipeline
-            result = self.pipe(audio)
+            accumulated_text = ""
+            chunk_duration = 30  # 30 seconds per chunk
+            chunk_samples = chunk_duration * sr
             
-            # Handle different result formats
-            if isinstance(result, dict):
-                result_dict = result
-                text_value = result_dict.get('text')
-                if text_value is not None:
-                    transcription = str(text_value).strip()
+            logger.info(f"Processing audio in {chunk_duration}-second chunks")
+            
+            for start_sample in range(0, len(audio), int(chunk_samples)):
+                end_sample = min(start_sample + chunk_samples, len(audio))
+                chunk_audio = audio[start_sample:end_sample]
+                
+                # Skip chunks that are too short
+                if len(chunk_audio) < 2 * sr:  # Less than 2 seconds
+                    continue
+                
+                # Transcribe chunk
+                result = self.pipe(chunk_audio)
+                
+                # Handle different result formats
+                if isinstance(result, dict):
+                    result_dict = result
+                    text_value = result_dict.get('text')
+                    if text_value is not None:
+                        chunk_text = str(text_value).strip()
+                    else:
+                        logger.warning(f"No 'text' key in result: {result_dict}")
+                        continue
+                elif isinstance(result, str):
+                    chunk_text = result.strip()
                 else:
-                    logger.warning(f"No 'text' key in result: {result_dict}")
-                    return ""
-            elif isinstance(result, str):
-                transcription = result.strip()
-            else:
-                logger.warning(f"Unexpected result format: {type(result)}")
-                return ""
+                    logger.warning(f"Unexpected result format: {type(result)}")
+                    continue
+                
+                if chunk_text:
+                    accumulated_text += " " + chunk_text
+                    word_count = len(accumulated_text.split())
+                    logger.debug(f"Chunk transcribed: {len(chunk_text)} chars, Total words: {word_count}")
+                    
+                    # Check if we've reached the minimum word count
+                    if word_count >= min_words:
+                        logger.info(f"Reached minimum word count ({min_words}) after processing chunk - stopping transcription")
+                        break
             
-            logger.debug(f"Transcribed {len(transcription)} characters")
-            return transcription
+            logger.info(f"Final transcription: {len(accumulated_text)} characters, {len(accumulated_text.split())} words")
+            return accumulated_text.strip()
             
         except Exception as e:
             logger.warning(f"Failed to transcribe audio: {e}")
             return ""
     
-    def contains_medical_content(self, text: str) -> bool:
+    def has_sufficient_transcript(self, text: str, min_words: int = 30) -> bool:
         """
-        Check if text contains medical content
+        Check if text has sufficient length for meaningful content
         
         Args:
             text: Transcribed text
+            min_words: Minimum number of words required (default: 30)
             
         Returns:
-            True if contains medical content
+            True if text has sufficient length
         """
         if not text:
             return False
         
-        text_lower = text.lower()
+        word_count = len(text.split())
+        has_sufficient = word_count >= min_words
         
-        # Count medical keywords
-        medical_count = 0
-        total_words = len(text.split())
+        logger.debug(f"Word count: {word_count}, Minimum required: {min_words}, "
+                    f"Has sufficient transcript: {has_sufficient}")
         
-        for keyword in self.medical_keywords:
-            if keyword in text_lower:
-                medical_count += text_lower.count(keyword)
-        
-        # Consider medical if:
-        # 1. At least 3 different medical terms found, OR
-        # 2. Medical terms make up at least 2% of total words
-        medical_density = medical_count / max(total_words, 1)
-        
-        is_medical = medical_count >= 3 or medical_density >= 0.02
-        
-        logger.debug(f"Medical keywords found: {medical_count}, Density: {medical_density:.3f}, "
-                    f"Is medical: {is_medical}")
-        
-        return is_medical
+        return has_sufficient
     
     def cleanup_temp_files(self):
         """Clean up temporary files"""
@@ -294,32 +495,35 @@ class MedicalVideoFilter:
             url: Video URL
             
         Returns:
-            True if video contains medical content
+            True if video has sufficient transcript length
         """
         logger.info(f"Processing: {url}")
         
         try:
             # Download video audio
-            audio_path = self.download_video_audio(url)
-            if not audio_path:
+            download_result = self.download_video_audio(url)
+            if not download_result:
                 logger.warning(f"Failed to download audio for: {url}")
                 return False
             
-            # Transcribe audio
-            transcription = self.transcribe_audio(audio_path)
+            audio_path = download_result['audio_path']
+            duration = download_result['duration']
+            
+            # Transcribe audio in chunks
+            transcription = self.transcribe_audio_chunked(audio_path, duration)
             if not transcription:
                 logger.warning(f"Failed to transcribe: {url}")
                 return False
             
-            # Check for medical content
-            has_medical_content = self.contains_medical_content(transcription)
+            # Check for sufficient transcript length
+            has_sufficient_transcript = self.has_sufficient_transcript(transcription)
             
             # Log sample of transcription for debugging
             sample_text = transcription[:200] + "..." if len(transcription) > 200 else transcription
             logger.info(f"Sample transcription: {sample_text}")
-            logger.info(f"Has medical content: {has_medical_content}")
+            logger.info(f"Has sufficient transcript: {has_sufficient_transcript}")
             
-            return has_medical_content
+            return has_sufficient_transcript
             
         except Exception as e:
             logger.error(f"Error processing {url}: {e}")
@@ -331,7 +535,8 @@ class MedicalVideoFilter:
     
     def run(self):
         """Main processing loop"""
-        logger.info("Starting Medical Video Filter")
+        logger.info("Starting Video Transcript Length Filter")
+        logger.info(f"Output file: {self.output_file}")
         
         try:
             # Load video links
@@ -342,16 +547,40 @@ class MedicalVideoFilter:
                 logger.warning("No video links found")
                 return
             
-            filtered_links = []
+            # Determine where to resume from
+            resume_index = self.get_resume_index(video_links)
             
-            # Process each video
-            for i, url in enumerate(tqdm(video_links, desc="Processing videos"), 1):
+            if resume_index >= total_videos:
+                logger.info("All videos have already been processed")
+                return
+            
+            # Load existing filtered links if resuming
+            existing_filtered_links = []
+            if resume_index > 0 and os.path.exists(self.output_file):
+                try:
+                    with open(self.output_file, 'r', encoding='utf-8') as f:
+                        existing_filtered_links = [line.strip() for line in f if line.strip()]
+                    logger.info(f"Loaded {len(existing_filtered_links)} existing filtered links")
+                except Exception as e:
+                    logger.warning(f"Failed to load existing filtered links: {e}")
+            
+            filtered_links = existing_filtered_links.copy()
+            
+            # Update counters for resume
+            self.kept_count = len(existing_filtered_links)
+            self.processed_count = resume_index
+            
+            # Process videos starting from resume_index
+            videos_to_process = video_links[resume_index:]
+            logger.info(f"Processing {len(videos_to_process)} videos starting from index {resume_index}")
+            
+            for i, url in enumerate(tqdm(videos_to_process, desc="Processing videos"), resume_index + 1):
                 logger.info(f"Processing video {i}/{total_videos}")
                 
                 try:
-                    has_medical_content = self.process_video(url)
+                    has_sufficient_transcript = self.process_video(url)
                     
-                    if has_medical_content:
+                    if has_sufficient_transcript:
                         filtered_links.append(url)
                         self.kept_count += 1
                         logger.info(f"✓ KEPT: {url}")
@@ -362,6 +591,7 @@ class MedicalVideoFilter:
                     
                     # Save progress every 10 videos
                     if i % 10 == 0:
+                        # Save all filtered links (overwrite to ensure consistency)
                         self.save_filtered_links(filtered_links)
                         logger.info(f"Progress saved: {self.kept_count}/{self.processed_count} videos kept")
                     
@@ -381,9 +611,9 @@ class MedicalVideoFilter:
             # Print summary
             logger.info(f"\n=== PROCESSING COMPLETE ===")
             logger.info(f"Total videos processed: {self.processed_count}")
-            logger.info(f"Videos with medical content: {self.kept_count}")
+            logger.info(f"Videos with sufficient transcript: {self.kept_count}")
             logger.info(f"Videos removed: {self.processed_count - self.kept_count}")
-            logger.info(f"Medical content ratio: {self.kept_count/max(self.processed_count, 1)*100:.1f}%")
+            logger.info(f"Sufficient transcript ratio: {self.kept_count/max(self.processed_count, 1)*100:.1f}%")
             logger.info(f"Filtered links saved to: {self.output_file}")
             
         except Exception as e:
@@ -401,19 +631,19 @@ class MedicalVideoFilter:
 def main():
     """Main function"""
     if len(sys.argv) < 2:
-        print("Usage: python medical_video_filter.py <video_links_file> [output_file]")
-        print("Example: python medical_video_filter.py my_videos.txt filtered_videos.txt")
+        print("Usage: python filter_video.py <video_links_file> [output_file]")
+        print("Example: python filter_video.py my_videos.txt filtered_videos.txt")
         sys.exit(1)
     
     video_links_file = sys.argv[1]
-    output_file = sys.argv[2] if len(sys.argv) > 2 else video_links_file
+    output_file = sys.argv[2] if len(sys.argv) > 2 else None
     
     if not os.path.exists(video_links_file):
         print(f"Error: File {video_links_file} not found")
         sys.exit(1)
     
     try:
-        filter_app = MedicalVideoFilter(video_links_file, output_file)
+        filter_app = VideoTranscriptFilter(video_links_file, output_file)
         filter_app.run()
     except Exception as e:
         logger.error(f"Application failed: {e}")
