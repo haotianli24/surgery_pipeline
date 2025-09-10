@@ -148,14 +148,17 @@ class SurgeryTranscriptionPipeline:
         
         report = self.generate_report(quality_report, audio_path, transcript_path, quality_report_path, timing_info)
 
-        # --- Cleanup: Delete video, audio, and chunk files ---
-        try:
-            # Delete original video file
-            if video_path.exists():
-                video_path.unlink()
-                print(f"Deleted video file: {video_path}")
-        except Exception as e:
-            print(f"Warning: Failed to delete video file {video_path}: {e}")
+        # --- Cleanup: Delete audio, and chunk files (keep original video) ---
+        # Note: Original video file is preserved
+        print(f"Preserving original video file: {video_path}")
+        
+        # try:
+        #     # Delete original video file
+        #     if video_path.exists():
+        #         video_path.unlink()
+        #         print(f"Deleted video file: {video_path}")
+        # except Exception as e:
+        #     print(f"Warning: Failed to delete video file {video_path}: {e}")
 
         try:
             # Delete extracted audio file (if not chunked, or if chunked, will be deleted below)

@@ -1,0 +1,50 @@
+{
+  "Brachial to Ulnar Bypass Using Cryopreserved Vein (Eric K. Peden, MD; M. Mujeeb Zubair, MD)_transcript_timestamped.txt": {
+    "surgery_type": "Brachial to Ulnar Bypass Using Cryopreserved Vein",
+    "total_duration": "6:52",
+    "phases": [
+      {
+        "name": "Preoperative Planning and Marking",
+        "start_time": "0:00",
+        "end_time": "0:34",
+        "description": "The surgeon begins by reviewing the patient's history and angiogram results, which show a patent brachial artery in its proximal segment and occluded brachial artery in the mid to distal segment. The ulnar artery is patent with dominant runoff to the hand via the interosseous artery. The skin incisions for the proposed brachial artery to ulnar artery bypass are then marked."
+      },
+      {
+        "name": "Ulnar Artery Exposure",
+        "start_time": "0:34",
+        "end_time": "2:00",
+        "description": "An incision is made just below the antecubital crease, centered over the lateral border of the pronator teres muscle. Dissection is carried through the skin and subcutaneous tissue. Crossing veins are clipped, divided, and ligated for better exposure. The pronator muscle group is retracted medially and the ulnar artery is dissected free from surrounding tissue. A vessel loop is passed around the ulnar artery."
+      },
+      {
+        "name": "Brachial Artery Exposure",
+        "start_time": "2:00",
+        "end_time": "2:52",
+        "description": "An incision is made in the proximal upper arm medial to the biceps brachial muscles. Dissection is continued through the subcutaneous tissue and medial to the bicep brachial muscle to expose the brachial artery. Care is taken to prevent injury to the median nerve."
+      },
+      {
+        "name": "Graft Tunneling and Preparation",
+        "start_time": "2:52",
+        "end_time": "3:52",
+        "description": "A suprafascial tunnel is created between the two incisions using a Gore tunneler. A cryopreserved vein graft is chosen due to the patient's lack of adequate veins. The vein is secured to the tunneler and pulled through the tunnel, then flushed with heparinized saline solution. The vein graft is beveled for an appropriate size anastomosis with the brachial artery."
+      },
+      {
+        "name": "Brachial Artery Anastomosis",
+        "start_time": "3:52",
+        "end_time": "4:52",
+        "description": "Proximal and distal control of the brachial artery is obtained. The patient is heparinized before the brachial artery is clamped. An arteriotomy is made in the brachial artery and extended with pot scissors. Stage sutures are placed for visualization during anastomosis. An end-to-side anastomosis is created between the vein graft and the brachial artery using 6-oproline suture in a running fashion. The clamps are then removed and the vein graft is distended."
+      },
+      {
+        "name": "Ulnar Artery Anastomosis",
+        "start_time": "4:52",
+        "end_time": "6:18",
+        "description": "Proximal and distal control of the ulnar artery is obtained and clamps are placed. An arteriotomy is made in the ulnar artery and extended with pot scissors. The graft is beveled for an appropriate size anastomosis with the ulnar artery. Stage sutures are placed on the ulnar artery. An end-to-side anastomosis is created between the distal end of the vein graft and the ulnar artery using 6-oproline suture in a running fashion. The graft is de-aired and the clamps are removed."
+      },
+      {
+        "name": "Completion and Assessment",
+        "start_time": "6:18",
+        "end_time": "6:52",
+        "description": "A completion angiogram is performed, demonstrating no technical errors in the proximal or distal anastomosis, good flow to the bypass conduit, and predominant runoff via the interosseous artery, which reconstitutes the radial artery at the anatomical snub box. The procedure concludes with the demonstration of collateral blood flow to the ulnar artery."
+      }
+    ]
+  }
+}

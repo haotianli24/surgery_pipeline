@@ -10,8 +10,8 @@ class AudioExtractor:
         self.config = config
         self.logger = logging.getLogger(__name__)
         # Set ffmpeg paths explicitly
-        self.ffmpeg_path = '/opt/homebrew/bin/ffmpeg'
-        self.ffprobe_path = '/opt/homebrew/bin/ffprobe'
+        self.ffmpeg_path = '/usr/bin/ffmpeg'
+        self.ffprobe_path = '/usr/bin/ffprobe'
     
     def extract_audio(self, video_path: Path, output_path: Optional[Path] = None) -> Path:
         """Extract audio from video using ffmpeg

@@ -1,0 +1,29 @@
+
+
+PROCEDURE: Thoracic Surgery： VATS Left Pneumonectomy
+------------------------------------------------------------
+Surgery Type: VATS Left Pneumonectomy
+Total Duration: 7:44
+
+SURGICAL PHASES (4):
+----------------------------------------
+
+Phase 1: Patient History and Diagnosis
+Time: [0:00] - [2:16]
+Description: The patient, a 67-year-old female non-smoker, presented with recurrent upper respiratory tract infections. Bronchoscopy revealed an obstructive distal left main stem mass, identified as a typical carcinoid neoplasm. The tumor extended down both the upper and lower lobe segmental bronchi with direct involvement of the secondary carina, making a sleeve resection not possible. The decision was made to proceed with a left pneumonectomy.
+
+Phase 2: Port Placement and Initial Dissection
+Time: [2:25] - [3:57]
+Description: The procedure was performed under general endotracheal anesthesia with a right-sided double lumen tube. A camera port was placed in the posterior axillary line, roughly eighth inner space. A second more lateral port was placed in the infrascapular line, and a fourth inner space working port was placed in the posterior axillary line, directly superior to the camera port. Initial dissection of the anterior and medial adhesions was performed with sharp dissection and bovi-electric cautery.
+
+Phase 3: Lung Mobilization and Vascular Control
+Time: [4:06] - [5:55]
+Description: The lung was mobilized off of the mediastinum using sharp and blunt dissection and bovi-electric cautery, preserving the phrenic nerve. The inferior pulmonary ligament was divided, and the lung was reflected anteriorly. Adhesions between the lung and the aorta were taken down, and the pleural reflection was divided posteriorly, preserving the vagus nerve. The superior and inferior pulmonary veins and the left main pulmonary artery were circumferentially isolated and divided with an endo-GI stapler.
+
+Phase 4: Bronchus Division and Specimen Removal
+Time: [6:04] - [7:26]
+Description: After additional dissection in the hilum to isolate the left main stem bronchus, the bronchus was encircled with an endo-GI stapler and divided. Care was taken to avoid injuring the recurrent laryngeal nerve. The lung specimen was removed with a large endo-catch bag through the anterior working port.
+
+
+============================================================
+

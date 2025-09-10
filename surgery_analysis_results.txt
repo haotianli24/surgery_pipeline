@@ -1,0 +1,35 @@
+
+SURGICAL PHASES (7):
+----------------------------------------
+
+Phase 1: Preoperative Planning and Marking
+Time: [0:00] - [0:34]
+Description: The procedure begins with a review of the patient's history and angiogram results, which show a patent brachial artery in its proximal segment and an occluded brachial artery in the mid to distal segment. The ulnar artery is patent with dominant runoff to the hand via the interosseous artery. The skin incisions for the proposed brachial artery to ulnar artery bypass are then marked.
+
+Phase 2: Ulnar Artery Exposure
+Time: [0:34] - [2:00]
+Description: An incision is made just below the antecubital crease, centered over the lateral border of the pronator teres muscle. Dissection is carried through the skin and subcutaneous tissue. Crossing veins are clipped, divided, and ligated for better exposure of the ulnar artery. The pronator muscle group is retracted medially and the ulnar artery is dissected free from surrounding tissue. A vessel loop is passed around the ulnar artery.
+
+Phase 3: Brachial Artery Exposure
+Time: [2:00] - [2:52]
+Description: Attention is turned to the brachial artery. An incision is made in the proximal upper arm medial to the biceps brachial muscles. Dissection is continued through the subcutaneous tissue and medial to the bicep brachial muscle to expose the brachial artery. Care is taken to prevent injury to the median nerve.
+
+Phase 4: Graft Tunneling and Preparation
+Time: [2:52] - [3:52]
+Description: A suprafacial tunnel is created between the two incisions using a Gore tunneler. A cryopreserved vein graft is chosen due to the patient's lack of adequate veins. The vein is secured to the tunneler and pulled through the tunnel, then flushed with heparinized saline solution. The vein graft is beveled for an appropriate size anastomosis with the brachial artery.
+
+Phase 5: Brachial Artery Anastomosis
+Time: [3:52] - [4:52]
+Description: Proximal and distal control of the brachial artery is obtained. The patient is heparinized and an arteriotomy is made in the brachial artery using an 11 blade, then extended with pot scissors. Stage sutures are placed for visualization during anastomosis. An end-to-side anastomosis is created between the vein graft and the brachial artery using 6-oproline suture in a running fashion. The clamps are removed and the vein graft is distended.
+
+Phase 6: Ulnar Artery Anastomosis
+Time: [4:52] - [6:18]
+Description: Proximal and distal control of the ulnar artery is obtained. An arteriotomy is made in the ulnar artery using an 11 blade, then extended with pot scissors. The graft is beveled for an appropriate size anastomosis with the ulnar artery. Stage sutures are placed on the ulnar artery. An end-to-side anastomosis is created between the distal end of the vein graft and the ulnar artery using 6-oproline suture in a running fashion. The graft is de-aired and the clamps are removed.
+
+Phase 7: Completion and Assessment
+Time: [6:18] - [6:52]
+Description: A completion angiogram is performed, demonstrating no technical errors in the proximal or distal anastomosis, good flow to the bypass conduit, and predominant runoff via the interosseous artery, which reconstitutes the radial artery at the anatomical snub box and provides collateral blood flow to the ulnar artery.
+
+
+============================================================
+
