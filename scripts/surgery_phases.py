@@ -261,6 +261,49 @@ Make the phase names and descriptions as specific and technical as possible, sim
         
         return "Unknown Surgery Type"
 
+    def analyze_surgery_phases(self, title: str, transcript_text: str) -> SurgeryAnalysis:
+        """Analyze surgery phases from title and transcript text directly."""
+        try:
+            print(f"Analyzing: {title}")
+            
+            # Step 1: Detect surgery type using AI
+            print("Detecting surgery type...")
+            surgery_type = self.detect_surgery_type_ai(title, transcript_text)
+            
+            # Small delay to respect API rate limits
+            time.sleep(1)
+            
+            # Extract timestamps and content
+            timestamped_content = self.extract_timestamps(transcript_text)
+            
+            if not timestamped_content:
+                # If no timestamps found, treat entire content as one segment
+                timestamped_content = [("0:00", transcript_text)]
+                print("No timestamps found, treating as single segment")
+            else:
+                print(f"Found {len(timestamped_content)} timestamped segments")
+            
+            # Step 2: Identify phases using AI with the detected surgery type
+            print("Identifying surgical phases...")
+            phases = self.identify_phases_ai(surgery_type, timestamped_content)
+            
+            # Calculate total duration
+            total_duration = timestamped_content[-1][0] if timestamped_content else "0:00"
+            
+            return SurgeryAnalysis(
+                surgery_type=surgery_type,
+                phases=phases,
+                total_duration=total_duration
+            )
+            
+        except Exception as e:
+            print(f"Error analyzing {title}: {str(e)}")
+            return SurgeryAnalysis(
+                surgery_type="Error",
+                phases=[],
+                total_duration="0:00"
+            )
+
     def analyze_transcript_file(self, file_path: str) -> SurgeryAnalysis:
         """Analyze a single transcript file using AI."""
         try:
